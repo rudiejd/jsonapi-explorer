@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MultiFieldInput from "./lib/MultiFieldInput.svelte";
+  import MultiFieldInput from "../lib/MultiFieldInput.svelte";
 
   import { onMount } from "svelte";
 
@@ -109,7 +109,7 @@
             <input type="text" bind:value={formResourceId} />
           </div>
 
-          <MultiFieldInput action={"filter"} setText={setFilters} />
+          <!-- <MultiFieldInput action={"filter"} setText={setFilters} /> -->
           <button type="submit">Explore</button>
         </form>
         <div>
@@ -275,6 +275,14 @@
 
   button {
     background-color: #e7e7e7;
+    color: black;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+  }
+
+  button:hover {
+    background-color: #ced6d0;
     color: black;
     padding: 10px;
     border-radius: 4px;
