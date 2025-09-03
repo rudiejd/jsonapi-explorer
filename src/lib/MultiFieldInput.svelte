@@ -16,31 +16,54 @@
   }
 
   let fieldToCreate = $state("");
-  function handleSubmit(e: Event) {
+  let valueOfField = $state("");
+  function addField(e: Event) {
     e.preventDefault();
-    fields = { ...fields, [fieldToCreate]: "" };
-    fieldToCreate = "";
+    if (fieldToCreate.length > 0) {
+      fields = { ...fields, [fieldToCreate]: valueOfField };
+      fieldToCreate = "";
+      valueOfField = "";
 
-    setText(generateFieldString(fields));
+      setText(generateFieldString(fields));
+    }
 
     return e;
   }
+
+  function removeField(fieldName: string) {
+    delete fields[fieldName];
+    setText(generateFieldString(fields));
+  }
 </script>
 
-<form onsubmit={handleSubmit}>
-  <input
-    bind:value={fieldToCreate}
-    placeholder={`Field for ${action}`}
-    type="text"
-    required
-  />
-  <button type="submit">Add {action}</button>
-</form>
+<input
+  bind:value={fieldToCreate}
+  placeholder={`Field for ${action}`}
+  type="text"
+/>
+
+<input
+  bind:value={valueOfField}
+  placeholder={`Value to ${action}`}
+  type="text"
+/>
+<button onclick={addField}>Add {action}</button>
 
 {#each Object.keys(fields) as field}
   <div>
     <input placeholder="field" value={field} readonly type="text" />
-    <input placeholder="field" bind:value={fields[field]} type="text" />
+    <input
+      placeholder="field"
+      bind:value={
+        () => fields[field],
+        (v) => {
+          fields[field] = v;
+          setText(fields);
+        }
+      }
+      type="text"
+    />
+    <button onclick={() => removeField(field)}>Remove</button>
   </div>
 {/each}
 
