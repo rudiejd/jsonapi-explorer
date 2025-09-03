@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IncludeInput from "$lib/IncludeInput.svelte";
+  import IncludeInput from "../lib/IncludeInput.svelte";
   import FilterInput from "../lib/FilterInput.svelte";
 
   import { onMount } from "svelte";
@@ -83,7 +83,7 @@
 
   onMount(async () => {
     const res = await fetch(buildRequestUrl());
-    data = (await res.json()) as Response;
+    data = await res.json();
   });
 
   function updateResource(relationship: string, relationshipId: string) {

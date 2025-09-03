@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SvelteSet } from "svelte/reactivity";
 
-  let { action, setText } = $props();
+  let { setText } = $props();
 
   let includes: SvelteSet<string> = new SvelteSet();
 
@@ -52,8 +52,7 @@
 </div>
 
 <style>
-  input[type="text"],
-  select {
+  input[type="text"] {
     width: 30%;
     padding: 12px 20px;
     margin: 8px 0;
