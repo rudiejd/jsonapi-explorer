@@ -1,5 +1,6 @@
 <script lang="ts">
-  import MultiFieldInput from "../lib/MultiFieldInput.svelte";
+  import IncludeInput from "$lib/IncludeInput.svelte";
+  import FilterInput from "../lib/FilterInput.svelte";
 
   import { onMount } from "svelte";
 
@@ -28,9 +29,13 @@
   let resourceId: string | undefined = $state(undefined);
 
   let filters: string | undefined = $state(undefined);
+  let includes: string | undefined = $state(undefined);
 
   let formFilters: string | undefined = $state(undefined);
+  let formIncludes: string | undefined = $state(undefined);
+
   const setFilters = (value: string) => (formFilters = value);
+  const setIncludes = (value: string) => (formIncludes = value);
 
   let formApiUrl = $state("https://api-v3.mbta.com");
   let formResource = $state("vehicles");
@@ -47,6 +52,14 @@
 
     if (filters && filters.length > 0) {
       url += `?${filters}`;
+    }
+
+    if (includes && includes.length > 0) {
+      if (url.includes("?")) {
+        url += `&${includes}`;
+      } else {
+        url += `?${includes}`;
+      }
     }
 
     return url;
@@ -90,6 +103,7 @@
     resource = formResource;
     resourceId = formResourceId;
     filters = formFilters;
+    includes = formIncludes;
   }
 </script>
 
@@ -115,7 +129,9 @@
             <input type="text" bind:value={formResourceId} />
           </div>
 
-          <MultiFieldInput action={"filter"} setText={setFilters} />
+          <FilterInput setText={setFilters} />
+          <br />
+          <IncludeInput setText={setIncludes} />
           <br />
           <button type="submit">Explore</button>
         </form>
