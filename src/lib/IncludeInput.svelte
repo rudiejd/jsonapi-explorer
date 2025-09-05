@@ -41,7 +41,7 @@
     type="text"
   />
 
-  <button onclick={addInclude}>Add {action}</button>
+  <button onclick={addInclude}>Add include</button>
 
   {#each includes as include}
     <div>
