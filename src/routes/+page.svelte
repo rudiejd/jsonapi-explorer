@@ -98,8 +98,10 @@
 			history.pushState(JSON.stringify(json), '', `${base}?${buildQueryParams()}`);
 			return json;
 		} else {
+			let json = await res.json();
+			console.log(json);
 			error = {
-				...res.json,
+				...json,
 				statusCode: res.status,
 				statusText: res.statusText
 			};
@@ -295,8 +297,9 @@
                           {JSON.stringify(error, null, 2)}
                         </pre>
 										{/if}
-									{:catch error}
-										<p>{error.message}</p>
+									{:catch}
+										<p style="color: red">Encountered error from API:</p>
+										<pre>{JSON.stringify(error, null, 2)}</pre>
 									{/await}
 								</div>
 							</div>
