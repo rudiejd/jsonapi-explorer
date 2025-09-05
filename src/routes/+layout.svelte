@@ -24,26 +24,27 @@
 		data: [Data];
 	}
 
-	let apiUrl = $state('https://api-v3.mbta.com');
-	let resource = $state('vehicles');
-	let resourceId: string | undefined = $state(undefined);
+	let requestUrl = $state(undefined);
 
 	let filters: string | undefined = $state(undefined);
 	let includes: string | undefined = $state(undefined);
 
-	let formFilters: string | undefined = $state(undefined);
-	let formIncludes: string | undefined = $state(undefined);
+	const setFilters = (value: string) => (filters = value);
+	const setIncludes = (value: string) => (includes = value);
 
-	const setFilters = (value: string) => (formFilters = value);
-	const setIncludes = (value: string) => (formIncludes = value);
-
-	let formApiUrl = $state('https://api-v3.mbta.com');
-	let formResource = $state('vehicles');
-	let formResourceId: string | undefined = $state(undefined);
+	let apiUrl = $state(undefined);
+	let resource = $state(undefined);
+	let resourceId: string | undefined = $state(undefined);
 
 	let error: object | undefined = $state(undefined);
 
-	function buildRequestUrl() {
+	function buildRequestUrl(
+		apiUrl: string,
+		resource: string,
+		resourceId: string,
+		filters: string,
+		includes: string
+	) {
 		let url = `${apiUrl}/${resource}`;
 
 		if (resourceId) {
@@ -65,11 +66,38 @@
 		return url;
 	}
 
+	function buildQueryParams() {
+		let queryParams = new URLSearchParams(document.location.search);
+
+		queryParams.set('apiUrl', apiUrl);
+		queryParams.set('resource', resource);
+
+		if (resourceId) {
+			queryParams.set('resourceId', resourceId);
+		}
+
+		if (filters) {
+			queryParams.set('filters', filters);
+		}
+
+		if (includes) {
+			queryParams.set('includes', filters);
+		}
+
+		console.log(queryParams);
+
+		return queryParams.toString();
+	}
+
 	let data = $derived.by(async () => {
-		let url = buildRequestUrl();
-		const res = await fetch(url);
+		let res = await fetch(requestUrl);
 		if (res.ok) {
-			return res.json();
+			let json = res.json();
+			let baseUrl = window.location.origin;
+			console.log(`${baseUrl}${buildQueryParams()}`);
+
+			history.pushState(JSON.stringify(json), '', `${baseUrl}?${buildQueryParams()}`);
+			return json;
 		} else {
 			error = {
 				...res.json,
@@ -82,8 +110,25 @@
 	});
 
 	onMount(async () => {
-		const res = await fetch(buildRequestUrl());
-		data = await res.json();
+		const params = new URLSearchParams(document.location.search);
+		const initialApiUrl = params.get('apiUrl');
+		const initialResource = params.get('resource');
+		const initialResourceId = params.get('resourceId');
+		const initialFilters = params.get('filters');
+		const initialIncludes = params.get('includes');
+
+		if (initialApiUrl && initialResource) {
+			apiUrl = initialApiUrl;
+			resource = initialResource;
+			resourceId = initialResourceId;
+			filters = initialFilters;
+			includes = initialIncludes;
+		} else {
+			apiUrl = 'https://api-v3.mbta.com';
+			resource = 'vehicles';
+		}
+
+		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
 	});
 
 	function updateResource(relationship: string, relationshipId: string) {
@@ -95,22 +140,20 @@
 		if (relationship) {
 			resourceId = relationshipId;
 		}
+
+		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
 	}
 
 	function handleSubmit(e: Event) {
 		e.preventDefault();
-		apiUrl = formApiUrl;
-		resource = formResource;
-		resourceId = formResourceId;
-		filters = formFilters;
-		includes = formIncludes;
+		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
 	}
 </script>
 
 <main>
 	<h1>JSONAPI Explorer</h1>
 
-	<p>{buildRequestUrl()}</p>
+	<p>{requestUrl}</p>
 
 	<div>
 		<div>
@@ -118,15 +161,15 @@
 				<form onsubmit={handleSubmit}>
 					<div>
 						<label>API URL</label>
-						<input type="text" bind:value={formApiUrl} />
+						<input type="text" bind:value={apiUrl} />
 					</div>
 					<div>
 						<label>Resource</label>
-						<input type="text" bind:value={formResource} required />
+						<input type="text" bind:value={resource} required />
 					</div>
 					<div>
 						<label>Resource ID</label>
-						<input type="text" bind:value={formResourceId} />
+						<input type="text" bind:value={resourceId} />
 					</div>
 
 					<FilterInput setText={setFilters} />
