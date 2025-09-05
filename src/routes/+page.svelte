@@ -108,7 +108,7 @@
 		}
 	});
 
-	onMount(async () => {
+	function applyRequestParams() {
 		const params = new URLSearchParams(document.location.search);
 		const initialApiUrl = params.get('apiUrl');
 		const initialResource = params.get('resource');
@@ -128,6 +128,14 @@
 		}
 
 		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
+	}
+
+	window.addEventListener('popstate', (e) => {
+		applyRequestParams();
+	});
+
+	onMount(async () => {
+		applyRequestParams();
 	});
 
 	function updateResource(relationship: string, relationshipId: string) {
