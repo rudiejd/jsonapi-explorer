@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IncludeInput from '../lib/IncludeInput.svelte';
 	import FilterInput from '../lib/FilterInput.svelte';
+	import { base } from '$app/paths';
 
 	import { onMount } from 'svelte';
 
@@ -93,10 +94,8 @@
 		let res = await fetch(requestUrl);
 		if (res.ok) {
 			let json = res.json();
-			let baseUrl = window.location.origin;
-			console.log(`${baseUrl}${buildQueryParams()}`);
 
-			history.pushState(JSON.stringify(json), '', `${baseUrl}?${buildQueryParams()}`);
+			history.pushState(JSON.stringify(json), '', `${base}?${buildQueryParams()}`);
 			return json;
 		} else {
 			error = {
