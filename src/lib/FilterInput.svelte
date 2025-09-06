@@ -37,10 +37,22 @@
 </script>
 
 <div>
-	<label>Filters</label>
-	<input bind:value={filterToCreate} placeholder={`Field for filter`} type="text" />
-	<input bind:value={valueOfFilter} placeholder={`Value to filter`} type="text" />
-	<button onclick={addFilter}>Add filter</button>
+	<div>
+		<input
+			bind:value={filterToCreate}
+			placeholder={`Field for filter`}
+			type="text"
+			class="form-text-input"
+		/>
+		<input
+			bind:value={valueOfFilter}
+			placeholder={`Value to filter`}
+			type="text"
+			class="form-text-input"
+		/>
+
+		<button onclick={addFilter}>Add filter</button>
+	</div>
 
 	{#each Object.keys(filters) as filter}
 		<div>
@@ -62,9 +74,7 @@
 </div>
 
 <style>
-	input[type='text'],
-	select {
-		width: 30%;
+	input[type='text'] {
 		padding: 12px 20px;
 		margin: 8px 0;
 		display: inline-block;

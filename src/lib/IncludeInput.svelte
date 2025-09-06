@@ -34,10 +34,10 @@
 </script>
 
 <div>
-	<label>Includes</label>
-	<input bind:value={includeToCreate} placeholder={`Value to include`} type="text" />
-
-	<button onclick={addInclude}>Add include</button>
+	<div>
+		<input bind:value={includeToCreate} placeholder={`Value to include`} type="text" />
+		<button onclick={addInclude}>Add include</button>
+	</div>
 
 	{#each includes as include}
 		<div>
@@ -49,7 +49,6 @@
 
 <style>
 	input[type='text'] {
-		width: 30%;
 		padding: 12px 20px;
 		margin: 8px 0;
 		display: inline-block;

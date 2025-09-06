@@ -159,34 +159,55 @@
 	}
 </script>
 
+<header>
+	<div class="container">
+		<h1>JSONAPI Explorer</h1>
+		<h2>
+			Explore the content of APIs that follow the <a href="https://jsonapi.org/"
+				>JSON:API standard</a
+			>
+		</h2>
+
+		<h3>Current URL: {requestUrl}</h3>
+	</div>
+</header>
+
 <main>
-	<h1>JSONAPI Explorer</h1>
+	<div class="container" style="padding: 8px;">
+		<form onsubmit={handleSubmit}>
+			<fieldset style="display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 5px;">
+				<div style="display: flex; flex-direction: column;">
+					<label>API URL</label>
+					<input type="text" bind:value={apiUrl} />
+				</div>
 
-	<p>{requestUrl}</p>
+				<div style="display: flex; flex-direction: column;">
+					<label>Resource</label>
+					<input type="text" bind:value={resource} required />
+				</div>
 
+				<div style="display: flex; flex-direction: column;">
+					<label>Resource ID</label>
+					<input type="text" bind:value={resourceId} />
+				</div>
+			</fieldset>
+			<fieldset style="display: flex">
+				<legend>Filters</legend>
+				<FilterInput setText={setFilters} />
+			</fieldset>
+			<fieldset>
+				<legend>Includes</legend>
+				<IncludeInput setText={setIncludes} />
+			</fieldset>
+
+			<div>
+				<button type="submit">Explore</button>
+			</div>
+		</form>
+	</div>
 	<div>
 		<div>
 			<div>
-				<form onsubmit={handleSubmit}>
-					<div>
-						<label>API URL</label>
-						<input type="text" bind:value={apiUrl} />
-					</div>
-					<div>
-						<label>Resource</label>
-						<input type="text" bind:value={resource} required />
-					</div>
-					<div>
-						<label>Resource ID</label>
-						<input type="text" bind:value={resourceId} />
-					</div>
-
-					<FilterInput setText={setFilters} />
-					<br />
-					<IncludeInput setText={setIncludes} />
-					<br />
-					<button type="submit">Explore</button>
-				</form>
 				<div>
 					<div>
 						<div>
@@ -313,14 +334,14 @@
 
 <style>
 	table {
-		font-family: Arial, Helvetica, sans-serif;
 		border-collapse: collapse;
-		width: 100%;
+		border: 10px;
+		white-space: normal;
 	}
 
 	td,
 	th {
-		border: 1px solid #ddd;
+		border: 0.5px solid #ddd;
 		padding: 8px;
 	}
 
@@ -342,28 +363,31 @@
 
 	input[type='text'],
 	select {
-		width: 50%;
 		padding: 12px 20px;
-		margin: 8px 0;
+		margin: 5px 0;
 		display: inline-block;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		box-sizing: border-box;
 	}
 
-	button {
-		background-color: #e7e7e7;
-		color: black;
-		padding: 10px;
-		border-radius: 4px;
+	.container {
+		width: 90%;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	main {
+		font-size: 16px;
+		width: 100%;
+	}
+
+	fieldset {
 		border: none;
 	}
 
-	button:hover {
-		background-color: #ced6d0;
-		color: black;
-		padding: 10px;
-		border-radius: 4px;
-		border: none;
+	h2,
+	h3 {
+		color: #5a5a5a;
 	}
 </style>
