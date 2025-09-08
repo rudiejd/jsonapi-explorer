@@ -1,7 +1,26 @@
 <script lang="ts">
-	let { setText } = $props();
+	let { setText, initialText } = $props();
 
-	let filters: Record<string, string> = $state({});
+	let initialFilters = {};
+	if (initialText && initialText.length > 0) {
+		initialFilters = decodeFilterString(initialText);
+	}
+
+	let filters: Record<string, string> = $state(initialFilters);
+
+	function decodeFilterString(encodedFilters: string) {
+		let decodedFilters = {};
+		// do I have to worry about forcing this regexp to only compile once? although since it's decoding URL query params, it should only run on mount anyway
+		const re = /filter\[(.+?)\]=([^&]+)&?/;
+		const matches = [...encodedFilters.matchAll(re)];
+
+		for (let i = 0; i < matches.length; i++) {
+			const [_, field, value] = matches[i];
+			decodedFilters[field] = value;
+		}
+
+		return decodedFilters;
+	}
 
 	function generateFilterString(filters: Record<string, string>): string {
 		let ret = '';
