@@ -175,7 +175,9 @@
 <main>
 	<div class="container" style="padding: 8px;">
 		<form onsubmit={handleSubmit}>
-			<fieldset style="display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 5px;">
+			<fieldset
+				style="display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 5px; width: 90%"
+			>
 				<div style="display: flex; flex-direction: column;">
 					<label>API URL</label>
 					<input type="text" bind:value={apiUrl} />
@@ -205,130 +207,116 @@
 			</div>
 		</form>
 	</div>
-	<div>
-		<div>
-			<div>
-				<div>
-					<div>
-						<div>
-							<div>
-								<div>
-									{#await data}
-										<p>Loading...</p>
-									{:then data}
-										{#if Array.isArray(data.data)}
-											<table class="japi-data">
-												<thead>
-													<tr>
-														<th> ID </th>
-														<th>Relationships</th>
-														{#each Object.keys(data.data[0].attributes) as attribute}
-															<th>
-																{attribute}
-															</th>
-														{/each}
-													</tr>
-												</thead>
-												<tbody>
-													{#each data.data as datum}
-														<tr>
-															<td>
-																{datum.id}
-															</td>
-															<td>
-																{#if datum.relationships}
-																	<ul>
-																		{#each Object.keys(datum.relationships) as relationship}
-																			{#if datum.relationships[relationship]['data']}
-																				<p>
-																					<a
-																						onclick={(e) => {
-																							e.preventDefault();
-																							updateResource(
-																								relationship,
-																								datum.relationships[relationship]['data']['id']
-																							);
-																						}}
-																						href="{apiUrl}/{relationship}s/{datum.relationships[
-																							relationship
-																						]['data']['id']}"
-																						>{`${relationship}: ${datum.relationships[relationship]['data']['id']}`}</a
-																					>
-																				</p>
-																			{/if}
-																		{/each}
-																	</ul>
-																{/if}
-															</td>
-															{#each Object.keys(datum.attributes) as attribute}
-																<td>
-																	{JSON.stringify(datum.attributes[attribute])}
-																</td>
-															{/each}
-														</tr>
-													{/each}
-												</tbody>
-											</table>
-										{:else if typeof data.data == 'object'}
-											<ul>
-												<table class="japi-data">
-													<tbody>
-														<tr>
-															<th> Relationships </th>
-															<td>
-																{#if data.data && data.data.relationships}
-																	{#each Object.keys(data.data.relationships) as relationship}
-																		{#if data.data.relationships[relationship]['data']}
-																			<p>
-																				<a
-																					onclick={(e) => {
-																						e.preventDefault();
-																						updateResource(
-																							relationship,
-																							data.data.relationships[relationship]['data']['id']
-																						);
-																					}}
-																					href="{apiUrl}/{relationship}s/{data.data.relationships[
-																						relationship
-																					]['data']['id']}"
-																					>{`${relationship}: ${data.data.relationships[relationship]['data']['id']}`}</a
-																				>
-																			</p>
-																		{/if}
-																	{/each}
-																{/if}
-															</td>
-														</tr>
-														{#each Object.keys(data.data.attributes) as attribute}
-															<tr>
-																<th>
-																	{attribute}
-																</th>
-																<td>
-																	{data.data.attributes[attribute]}
-																</td>
-															</tr>
-														{/each}
-													</tbody>
-												</table>
-											</ul>
-										{:else}
-											<p style="color: red;">Could not handle API response:</p>
-											<pre>
+	<div class="table-container container">
+		{#await data}
+			<p>Loading...</p>
+		{:then data}
+			{#if Array.isArray(data.data)}
+				<table class="japi-data">
+					<thead>
+						<tr>
+							<th> ID </th>
+							<th>Relationships</th>
+							{#each Object.keys(data.data[0].attributes) as attribute}
+								<th>
+									{attribute}
+								</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.data as datum}
+							<tr>
+								<td>
+									{datum.id}
+								</td>
+								<td>
+									{#if datum.relationships}
+										<ul>
+											{#each Object.keys(datum.relationships) as relationship}
+												{#if datum.relationships[relationship]['data']}
+													<p>
+														<a
+															onclick={(e) => {
+																e.preventDefault();
+																updateResource(
+																	relationship,
+																	datum.relationships[relationship]['data']['id']
+																);
+															}}
+															href="{apiUrl}/{relationship}s/{datum.relationships[relationship][
+																'data'
+															]['id']}"
+															>{`${relationship}: ${datum.relationships[relationship]['data']['id']}`}</a
+														>
+													</p>
+												{/if}
+											{/each}
+										</ul>
+									{/if}
+								</td>
+								{#each Object.keys(datum.attributes) as attribute}
+									<td>
+										{JSON.stringify(datum.attributes[attribute])}
+									</td>
+								{/each}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{:else if typeof data.data == 'object'}
+				<ul>
+					<table class="japi-data">
+						<tbody>
+							<tr>
+								<th> Relationships </th>
+								<td>
+									{#if data.data && data.data.relationships}
+										{#each Object.keys(data.data.relationships) as relationship}
+											{#if data.data.relationships[relationship]['data']}
+												<p>
+													<a
+														onclick={(e) => {
+															e.preventDefault();
+															updateResource(
+																relationship,
+																data.data.relationships[relationship]['data']['id']
+															);
+														}}
+														href="{apiUrl}/{relationship}s/{data.data.relationships[relationship][
+															'data'
+														]['id']}"
+														>{`${relationship}: ${data.data.relationships[relationship]['data']['id']}`}</a
+													>
+												</p>
+											{/if}
+										{/each}
+									{/if}
+								</td>
+							</tr>
+							{#each Object.keys(data.data.attributes) as attribute}
+								<tr>
+									<th>
+										{attribute}
+									</th>
+									<td>
+										{data.data.attributes[attribute]}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</ul>
+			{:else}
+				<p style="color: red;">Could not handle API response:</p>
+				<pre>
                           {JSON.stringify(error, null, 2)}
                         </pre>
-										{/if}
-									{:catch}
-										<p style="color: red">Encountered error from API:</p>
-										<pre>{JSON.stringify(error, null, 2)}</pre>
-									{/await}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+			{/if}
+		{:catch}
+			<p style="color: red">Encountered error from API:</p>
+			<pre>{JSON.stringify(error, null, 2)}</pre>
+		{/await}
 	</div>
 </main>
 
@@ -337,6 +325,7 @@
 		border-collapse: collapse;
 		border: 10px;
 		white-space: normal;
+		width: 100%;
 	}
 
 	td,
@@ -372,8 +361,7 @@
 	}
 
 	.container {
-		width: 90%;
-		max-width: 1000px;
+		width: 95%;
 		margin: 0 auto;
 	}
 
@@ -389,5 +377,10 @@
 	h2,
 	h3 {
 		color: #5a5a5a;
+	}
+
+	.table-container {
+		overflow: scroll;
+		max-height: 500px;
 	}
 </style>
