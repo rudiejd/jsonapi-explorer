@@ -83,7 +83,7 @@
 		}
 
 		if (includes && includes.length > 0) {
-			queryParams.set('includes', filters);
+			queryParams.set('includes', includes);
 		}
 
 		return queryParams.toString();
@@ -184,7 +184,7 @@
 			</fieldset>
 			<fieldset>
 				<legend>Includes</legend>
-				<IncludeInput setText={setIncludes} />
+				<IncludeInput setText={setIncludes} initialText={$state.snapshot(includes)} />
 			</fieldset>
 
 			<div>

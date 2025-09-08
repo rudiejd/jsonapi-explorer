@@ -1,9 +1,34 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
 
-	let { setText } = $props();
+	let { setText, initialText } = $props();
 
-	let includes: SvelteSet<string> = new SvelteSet();
+	let includes: SvelteSet<string> = decodeIncludeString(initialText);
+
+	function decodeIncludeString(encodedIncludes: string): SvelteSet<string> {
+		let decodedIncludes = new SvelteSet<string>();
+		if (!encodedIncludes || encodedIncludes.length == 0) {
+			return decodedIncludes;
+		}
+
+		const re = /include=(.+)/g;
+		const matches = [...encodedIncludes.matchAll(re)];
+
+		if (matches.length != 1 || matches[0].length != 2) {
+			throw `Invalid include string in query params: ${encodedIncludes}`;
+		}
+
+		const [_, includesCsv] = matches[0];
+
+		const includes = includesCsv.split(',');
+		for (const include of includes) {
+			if (include.trim().length > 0) {
+				decodedIncludes.add(include);
+			}
+		}
+
+		return decodedIncludes;
+	}
 
 	function generateIncludeString(includes: SvelteSet<string>): string {
 		let ret = 'include=';
@@ -41,7 +66,7 @@
 
 	{#each includes as include}
 		<div>
-			<input placeholder="filter" value={include} readonly type="text" />
+			<input value={include} readonly type="text" />
 			<button onclick={() => removeInclude(include)}>Remove</button>
 		</div>
 	{/each}
