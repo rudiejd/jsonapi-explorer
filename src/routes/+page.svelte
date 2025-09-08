@@ -27,15 +27,16 @@
 
 	let requestUrl = $state(undefined);
 
-	let filters: string | undefined = $state(undefined);
-	let includes: string | undefined = $state(undefined);
+	const params = new URLSearchParams(document.location.search);
+
+	let filters: string | undefined = $state(params.get('filters'));
+	let includes: string | undefined = $state(params.get('includes'));
+	let apiUrl = $state(params.get('apiUrl'));
+	let resource = $state(params.get('resource'));
+	let resourceId: string | undefined = $state(params.get('resourceId'));
 
 	const setFilters = (value: string) => (filters = value);
 	const setIncludes = (value: string) => (includes = value);
-
-	let apiUrl = $state(undefined);
-	let resource = $state(undefined);
-	let resourceId: string | undefined = $state(undefined);
 
 	let error: object | undefined = $state(undefined);
 
@@ -73,19 +74,17 @@
 		queryParams.set('apiUrl', apiUrl);
 		queryParams.set('resource', resource);
 
-		if (resourceId) {
+		if (resourceId && resourceId.length > 0) {
 			queryParams.set('resourceId', resourceId);
 		}
 
-		if (filters) {
+		if (filters && filters.length > 0) {
 			queryParams.set('filters', filters);
 		}
 
-		if (includes) {
+		if (includes && includes.length > 0) {
 			queryParams.set('includes', filters);
 		}
-
-		console.log(queryParams);
 
 		return queryParams.toString();
 	}
@@ -99,7 +98,6 @@
 			return json;
 		} else {
 			let json = await res.json();
-			console.log(json);
 			error = {
 				...json,
 				statusCode: res.status,
@@ -111,20 +109,7 @@
 	});
 
 	function applyRequestParams() {
-		const params = new URLSearchParams(document.location.search);
-		const initialApiUrl = params.get('apiUrl');
-		const initialResource = params.get('resource');
-		const initialResourceId = params.get('resourceId');
-		const initialFilters = params.get('filters');
-		const initialIncludes = params.get('includes');
-
-		if (initialApiUrl && initialResource) {
-			apiUrl = initialApiUrl;
-			resource = initialResource;
-			resourceId = initialResourceId;
-			filters = initialFilters;
-			includes = initialIncludes;
-		} else {
+		if (!apiUrl || !resourceId) {
 			apiUrl = 'https://api-v3.mbta.com';
 			resource = 'vehicles';
 		}
@@ -195,7 +180,7 @@
 			</fieldset>
 			<fieldset style="display: flex">
 				<legend>Filters</legend>
-				<FilterInput setText={setFilters} />
+				<FilterInput setText={setFilters} initialText={$state.snapshot(filters)} />
 			</fieldset>
 			<fieldset>
 				<legend>Includes</legend>
