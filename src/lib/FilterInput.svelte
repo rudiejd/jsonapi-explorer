@@ -1,19 +1,9 @@
 <script lang="ts">
-	let { setText } = $props();
+	let { setText, initialText } = $props();
 
-	let filters: Record<string, string> = $state({});
+	import { decodeFilterString, generateFilterString } from './queryParamUtils.svelte.ts';
 
-	function generateFilterString(filters: Record<string, string>): string {
-		let ret = '';
-		for (const [filter, filterValue] of Object.entries(filters)) {
-			if (ret.length > 0) {
-				ret += '&';
-			}
-			ret += `filter[${filter}]=${filterValue}`;
-		}
-
-		return ret;
-	}
+	let filters: Record<string, string> = $state(decodeFilterString(initialText));
 
 	let filterToCreate = $state('');
 	let valueOfFilter = $state('');

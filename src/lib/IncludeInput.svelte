@@ -1,18 +1,11 @@
 <script lang="ts">
+	import { decodeIncludeString, generateIncludeString } from './queryParamUtils.svelte.ts';
+
 	import { SvelteSet } from 'svelte/reactivity';
 
-	let { setText } = $props();
+	let { setText, initialText } = $props();
 
-	let includes: SvelteSet<string> = new SvelteSet();
-
-	function generateIncludeString(includes: SvelteSet<string>): string {
-		let ret = 'include=';
-		for (const include of includes) {
-			ret += `${include},`;
-		}
-
-		return ret;
-	}
+	let includes: SvelteSet<string> = decodeIncludeString(initialText);
 
 	let includeToCreate = $state('');
 	function addInclude(e: Event) {
@@ -41,7 +34,7 @@
 
 	{#each includes as include}
 		<div>
-			<input placeholder="filter" value={include} readonly type="text" />
+			<input value={include} readonly type="text" />
 			<button onclick={() => removeInclude(include)}>Remove</button>
 		</div>
 	{/each}
