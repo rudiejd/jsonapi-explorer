@@ -158,8 +158,11 @@
 		const file = new Blob([csvString], { type: 'text/csv' });
 
 		const downloadLink = document.createElement('a');
-		downloadLink.download = 'test.csv';
+		const serializedTime = new Date().toISOString();
+		downloadLink.download = `${requestUrl}-${serializedTime}.csv`;
 		const url = window.URL.createObjectURL(file);
+
+		// TODO: is there a more idiomatic way to do this in svelte?
 		downloadLink.href = url;
 		downloadLink.setAttribute('display', 'none');
 		document.body.appendChild(downloadLink);
@@ -221,13 +224,14 @@
 			<p>Loading...</p>
 		{:then data}
 			{#if Array.isArray(data.data)}
-				<a
-					href="/"
+				<button
 					onclick={(e) => {
-						e.preventDefault();
 						downloadCsv(data.data);
-					}}>Download attributes as a CSV</a
+					}}>Download attributes as a CSV</button
 				>
+				<br />
+				<br />
+
 				<table class="japi-data">
 					<thead>
 						<tr>
@@ -399,6 +403,6 @@
 
 	.table-container {
 		overflow: scroll;
-		max-height: 500px;
+		max-height: 1000px;
 	}
 </style>
