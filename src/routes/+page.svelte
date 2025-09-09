@@ -328,10 +328,12 @@
 	}
 
 	th {
+		position: sticky;
+		top: 0;
 		padding-top: 6px;
 		padding-bottom: 6px;
 		text-align: left;
-		background-color: #04aa6d;
+		background-color: forestgreen;
 		color: white;
 	}
 
