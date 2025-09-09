@@ -3,6 +3,8 @@
 	import FilterInput from '../lib/FilterInput.svelte';
 	import { base } from '$app/paths';
 
+	import { objectsToCsvString } from '../lib/csvUtils.svelte.ts';
+
 	import { onMount } from 'svelte';
 
 	interface RelationshipData {
@@ -142,6 +144,31 @@
 		e.preventDefault();
 		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
 	}
+
+	function downloadCsv(data) {
+		const objs = data.map((d) => {
+			return {
+				id: d.id,
+				...d.attributes
+			};
+		});
+
+		const csvString = objectsToCsvString(objs);
+
+		const file = new Blob([csvString], { type: 'text/csv' });
+
+		const downloadLink = document.createElement('a');
+		const serializedTime = new Date().toISOString();
+		downloadLink.download = `${requestUrl}-${serializedTime}.csv`;
+		const url = window.URL.createObjectURL(file);
+
+		// TODO: is there a more idiomatic way to do this in svelte?
+		downloadLink.href = url;
+		downloadLink.setAttribute('display', 'none');
+		document.body.appendChild(downloadLink);
+		downloadLink.click();
+		document.body.removeChild(downloadLink);
+	}
 </script>
 
 <header>
@@ -197,6 +224,14 @@
 			<p>Loading...</p>
 		{:then data}
 			{#if Array.isArray(data.data)}
+				<button
+					onclick={() => {
+						downloadCsv(data.data);
+					}}>Download attributes as a CSV</button
+				>
+				<br />
+				<br />
+
 				<table class="japi-data">
 					<thead>
 						<tr>
@@ -368,6 +403,6 @@
 
 	.table-container {
 		overflow: scroll;
-		max-height: 500px;
+		max-height: 1000px;
 	}
 </style>
