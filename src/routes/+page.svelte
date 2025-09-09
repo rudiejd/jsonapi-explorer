@@ -109,7 +109,7 @@
 	});
 
 	function applyRequestParams() {
-		if (!apiUrl || !resourceId) {
+		if (!apiUrl || !resource) {
 			apiUrl = 'https://api-v3.mbta.com';
 			resource = 'vehicles';
 		}
