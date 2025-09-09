@@ -225,7 +225,7 @@
 		{:then data}
 			{#if Array.isArray(data.data)}
 				<button
-					onclick={(e) => {
+					onclick={() => {
 						downloadCsv(data.data);
 					}}>Download attributes as a CSV</button
 				>
