@@ -1,10 +1,18 @@
 export function objectsToCsvString(objs: Object[]) {
+	if (objs.length < 1) {
+		return {};
+	}
+
 	let rows = [];
 
 	// header row
 	let firstRow = '';
-	for (const key of Object.keys(objs[0])) {
-		firstRow += key + ',';
+	const keys = Object.keys(objs[0]);
+	for (let i = 0; i < keys.length; i++) {
+		firstRow += keys[i];
+		if (i < keys.length - 1) {
+			firstRow += ',';
+		}
 	}
 
 	rows.push(firstRow);
