@@ -1,36 +1,9 @@
 <script lang="ts">
 	let { setText, initialText } = $props();
 
+	import { decodeFilterString, generateFilterString } from './queryParamUtils.svelte.ts';
+
 	let filters: Record<string, string> = $state(decodeFilterString(initialText));
-
-	function decodeFilterString(encodedFilters: string) {
-		if (!encodedFilters || encodedFilters.length == 0) {
-			return {};
-		}
-		let decodedFilters = {};
-		// do I have to worry about forcing this regexp to only compile once? although since it's decoding URL query params, it should only run on mount anyway
-		const re = /filter\[(.+?)\]=([^&]+)&?/g;
-		const matches = [...encodedFilters.matchAll(re)];
-
-		for (let i = 0; i < matches.length; i++) {
-			const [_, field, value] = matches[i];
-			decodedFilters[field] = value;
-		}
-
-		return decodedFilters;
-	}
-
-	function generateFilterString(filters: Record<string, string>): string {
-		let ret = '';
-		for (const [filter, filterValue] of Object.entries(filters)) {
-			if (ret.length > 0) {
-				ret += '&';
-			}
-			ret += `filter[${filter}]=${filterValue}`;
-		}
-
-		return ret;
-	}
 
 	let filterToCreate = $state('');
 	let valueOfFilter = $state('');
