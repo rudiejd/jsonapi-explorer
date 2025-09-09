@@ -3,6 +3,8 @@
 	import FilterInput from '../lib/FilterInput.svelte';
 	import { base } from '$app/paths';
 
+	import { objectsToCsvString } from '../lib/csvUtils.svelte.ts';
+
 	import { onMount } from 'svelte';
 
 	interface RelationshipData {
@@ -142,6 +144,28 @@
 		e.preventDefault();
 		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
 	}
+
+	function downloadCsv(data) {
+		const objs = data.map((d) => {
+			return {
+				id: d.id,
+				...d.attributes
+			};
+		});
+
+		const csvString = objectsToCsvString(objs);
+
+		const file = new Blob([csvString], { type: 'text/csv' });
+
+		const downloadLink = document.createElement('a');
+		downloadLink.download = 'test.csv';
+		const url = window.URL.createObjectURL(file);
+		downloadLink.href = url;
+		downloadLink.setAttribute('display', 'none');
+		document.body.appendChild(downloadLink);
+		downloadLink.click();
+		document.body.removeChild(downloadLink);
+	}
 </script>
 
 <header>
@@ -197,6 +221,13 @@
 			<p>Loading...</p>
 		{:then data}
 			{#if Array.isArray(data.data)}
+				<a
+					href="/"
+					onclick={(e) => {
+						e.preventDefault();
+						downloadCsv(data.data);
+					}}>Download attributes as a CSV</a
+				>
 				<table class="japi-data">
 					<thead>
 						<tr>
