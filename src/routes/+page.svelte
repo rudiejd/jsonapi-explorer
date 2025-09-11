@@ -50,6 +50,7 @@
 		includes: string
 	) {
 		let url = `${apiUrl}/${resource}`;
+		debugger;
 
 		if (resourceId) {
 			url += `/${resourceId}`;
@@ -94,7 +95,7 @@
 	let data = $derived.by(async () => {
 		let res = await fetch(requestUrl);
 		if (res.ok) {
-			let json = res.json();
+			let json = await res.json();
 
 			history.pushState(JSON.stringify(json), '', `${base}?${buildQueryParams()}`);
 			return json;
@@ -120,6 +121,13 @@
 	}
 
 	window.addEventListener('popstate', (e) => {
+		let queryParams = new URLSearchParams(document.location.search);
+		apiUrl = queryParams.get('apiUrl');
+		resource = queryParams.get('resource');
+		resourceId = queryParams.get('resourceId');
+		filters = queryParams.get('filters');
+		includes = queryParams.get('includes');
+
 		applyRequestParams();
 	});
 
