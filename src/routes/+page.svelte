@@ -328,7 +328,7 @@
 										{attribute}
 									</th>
 									<td>
-										{data.data.attributes[attribute]}
+										{JSON.stringify(data.data.attributes[attribute])}
 									</td>
 								</tr>
 							{/each}
