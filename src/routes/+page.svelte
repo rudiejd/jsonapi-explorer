@@ -135,17 +135,17 @@
 		applyRequestParams();
 	});
 
-	function updateResource(relationship: string, relationshipId: string) {
+	function pluralize(relationship: string): string {
 		if (relationship.endsWith('y')) {
-			resource = relationship.substr(relationship.length - 1) + 'ies';
+			return relationship.substr(relationship.length - 1) + 'ies';
 		} else {
-			resource = relationship + 's';
+			return relationship + 's';
 		}
-		if (relationship) {
-			resourceId = relationshipId;
-		}
+	}
 
-		requestUrl = buildRequestUrl(apiUrl, resource, resourceId, filters, includes);
+	function updateResource(relationship: string, relationshipId: string) {
+		let resource = pluralize(relationship);
+		requestUrl = buildRequestUrl(apiUrl, resource, relationshipId, filters, includes);
 	}
 
 	function handleSubmit(e: Event) {
@@ -272,9 +272,8 @@
 																	datum.relationships[relationship]['data']['id']
 																);
 															}}
-															href="{apiUrl}/{relationship}s/{datum.relationships[relationship][
-																'data'
-															]['id']}"
+															href="{base}?apiUrl={apiUrl}&resource={relationship}s&resourceId={datum
+																.relationships[relationship]['data']['id']}"
 															>{`${relationship}: ${datum.relationships[relationship]['data']['id']}`}</a
 														>
 													</p>
@@ -311,9 +310,9 @@
 																data.data.relationships[relationship]['data']['id']
 															);
 														}}
-														href="{apiUrl}/{relationship}s/{data.data.relationships[relationship][
-															'data'
-														]['id']}"
+														href="{apiUrl}/{pluralize(relationship)}/{data.data.relationships[
+															relationship
+														]['data']['id']}"
 														>{`${relationship}: ${data.data.relationships[relationship]['data']['id']}`}</a
 													>
 												</p>
