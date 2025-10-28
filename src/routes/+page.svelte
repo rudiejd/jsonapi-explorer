@@ -144,7 +144,7 @@
 	}
 
 	function updateResource(relationship: string, relationshipId: string) {
-		let resource = pluralize(relationship);
+		resource = pluralize(relationship);
 		requestUrl = buildRequestUrl(apiUrl, resource, relationshipId, filters, includes);
 	}
 
@@ -268,12 +268,13 @@
 															onclick={(e) => {
 																e.preventDefault();
 																updateResource(
-																	relationship,
+																	datum.relationships[relationship]['data']['type'],
 																	datum.relationships[relationship]['data']['id']
 																);
 															}}
-															href="{base}?apiUrl={apiUrl}&resource={relationship}s&resourceId={datum
-																.relationships[relationship]['data']['id']}"
+															href="{base}?apiUrl={apiUrl}&resource={pluralize(
+																datum.relationships[relationship]['data']['type']
+															)}&resourceId={datum.relationships[relationship]['data']['id']}"
 															>{`${relationship}: ${datum.relationships[relationship]['data']['id']}`}</a
 														>
 													</p>
