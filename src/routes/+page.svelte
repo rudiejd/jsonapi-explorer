@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IncludeInput from '../lib/IncludeInput.svelte';
 	import FilterInput from '../lib/FilterInput.svelte';
+	import RelationshipLink from '$lib/RelationshipLink.svelte';
 	import { base } from '$app/paths';
 
 	import { objectsToCsvString } from '../lib/csvUtils.svelte.ts';
@@ -135,17 +136,8 @@
 		applyRequestParams();
 	});
 
-	function pluralize(relationship: string): string {
-		if (relationship.endsWith('y')) {
-			return relationship.substr(relationship.length - 1) + 'ies';
-		} else {
-			return relationship + 's';
-		}
-	}
-
-	function updateResource(relationship: string, relationshipId: string) {
-		resource = pluralize(relationship);
-		requestUrl = buildRequestUrl(apiUrl, resource, relationshipId, filters, includes);
+	function updateResource(pluralResource: string, relationshipId: string) {
+		requestUrl = buildRequestUrl(apiUrl, pluralResource, relationshipId, filters, includes);
 	}
 
 	function handleSubmit(e: Event) {
@@ -263,21 +255,13 @@
 										<ul>
 											{#each Object.keys(datum.relationships) as relationship}
 												{#if datum.relationships[relationship]['data']}
-													<p>
-														<a
-															onclick={(e) => {
-																e.preventDefault();
-																updateResource(
-																	datum.relationships[relationship]['data']['type'],
-																	datum.relationships[relationship]['data']['id']
-																);
-															}}
-															href="{base}?apiUrl={apiUrl}&resource={pluralize(
-																datum.relationships[relationship]['data']['type']
-															)}&resourceId={datum.relationships[relationship]['data']['id']}"
-															>{`${relationship}: ${datum.relationships[relationship]['data']['id']}`}</a
-														>
-													</p>
+													<RelationshipLink
+														{relationship}
+														resourceType={datum.relationships[relationship]['data']['type']}
+														resourceId={datum.relationships[relationship]['data']['id']}
+														setResource={updateResource}
+														urlBase="{base}?apiUrl={apiUrl}"
+													/>
 												{/if}
 											{/each}
 										</ul>
@@ -302,21 +286,13 @@
 									{#if data.data && data.data.relationships}
 										{#each Object.keys(data.data.relationships) as relationship}
 											{#if data.data.relationships[relationship]['data']}
-												<p>
-													<a
-														onclick={(e) => {
-															e.preventDefault();
-															updateResource(
-																relationship,
-																data.data.relationships[relationship]['data']['id']
-															);
-														}}
-														href="{apiUrl}/{pluralize(relationship)}/{data.data.relationships[
-															relationship
-														]['data']['id']}"
-														>{`${relationship}: ${data.data.relationships[relationship]['data']['id']}`}</a
-													>
-												</p>
+												<RelationshipLink
+													{relationship}
+													resourceType={data.data.relationships[relationship]['data']['type']}
+													resourceId={data.data.relationships[relationship]['data']['id']}
+													setResource={updateResource}
+													urlBase="{base}?apiUrl={apiUrl}"
+												/>
 											{/if}
 										{/each}
 									{/if}
