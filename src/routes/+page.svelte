@@ -38,8 +38,8 @@
 	let resource = $state(params.get('resource'));
 	let resourceId: string | undefined = $state(params.get('resourceId'));
 
-	const setFilters = (value: string) => (filters = value);
-	const setIncludes = (value: string) => (includes = value);
+	const setFilters = (value: string | null) => (filters = value);
+	const setIncludes = (value: string | null) => (includes = value);
 
 	let error: object | undefined = $state(undefined);
 
@@ -137,6 +137,10 @@
 	});
 
 	function updateResource(pluralResource: string, relationshipId: string) {
+		resource = pluralResource;
+		if (relationshipId) {
+			resourceId = relationshipId;
+		}
 		requestUrl = buildRequestUrl(apiUrl, pluralResource, relationshipId, filters, includes);
 	}
 
@@ -207,11 +211,11 @@
 			</fieldset>
 			<fieldset style="display: flex">
 				<legend>Filters</legend>
-				<FilterInput setText={setFilters} initialText={$state.snapshot(filters)} />
+				<FilterInput setText={setFilters} initialText={filters} />
 			</fieldset>
 			<fieldset>
 				<legend>Includes</legend>
-				<IncludeInput setText={setIncludes} initialText={$state.snapshot(includes)} />
+				<IncludeInput setText={setIncludes} initialText={includes} />
 			</fieldset>
 
 			<div>
@@ -260,6 +264,8 @@
 														resourceType={datum.relationships[relationship]['data']['type']}
 														resourceId={datum.relationships[relationship]['data']['id']}
 														setResource={updateResource}
+														{setFilters}
+														{setIncludes}
 														urlBase="{base}?apiUrl={apiUrl}"
 													/>
 												{/if}
@@ -291,6 +297,8 @@
 													resourceType={data.data.relationships[relationship]['data']['type']}
 													resourceId={data.data.relationships[relationship]['data']['id']}
 													setResource={updateResource}
+													{setFilters}
+													{setIncludes}
 													urlBase="{base}?apiUrl={apiUrl}"
 												/>
 											{/if}
