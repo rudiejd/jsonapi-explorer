@@ -51,7 +51,6 @@
 		includes: string
 	) {
 		let url = `${apiUrl}/${resource}`;
-		debugger;
 
 		if (resourceId) {
 			url += `/${resourceId}`;
@@ -258,16 +257,30 @@
 									{#if datum.relationships}
 										<ul>
 											{#each Object.keys(datum.relationships) as relationship}
-												{#if datum.relationships[relationship]['data']}
-													<RelationshipLink
-														{relationship}
-														resourceType={datum.relationships[relationship]['data']['type']}
-														resourceId={datum.relationships[relationship]['data']['id']}
-														setResource={updateResource}
-														{setFilters}
-														{setIncludes}
-														urlBase="{base}?apiUrl={apiUrl}"
-													/>
+												{#if datum.relationships[relationship] && datum.relationships[relationship]['data']}
+													{#if Array.isArray(datum.relationships[relationship]['data'])}
+														{#each datum.relationships[relationship]['data'] as arrRelationship}
+															<RelationshipLink
+																{relationship}
+																resourceType={arrRelationship['type']}
+																resourceId={arrRelationship['id']}
+																setResource={updateResource}
+																{setFilters}
+																{setIncludes}
+																urlBase="{base}?apiUrl={apiUrl}"
+															/>
+														{/each}
+													{:else}
+														<RelationshipLink
+															{relationship}
+															resourceType={datum.relationships[relationship]['data']['type']}
+															resourceId={datum.relationships[relationship]['data']['id']}
+															setResource={updateResource}
+															{setFilters}
+															{setIncludes}
+															urlBase="{base}?apiUrl={apiUrl}"
+														/>
+													{/if}
 												{/if}
 											{/each}
 										</ul>
